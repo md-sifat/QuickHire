@@ -24,6 +24,7 @@ async function run() {
         // await client.connect();
         const jobsCollection = client.db(process.env.MONGO_DB_NAME).collection("jobs");
 
+        // ....... to fetch the data and filter them ..............
         // GET all jobs
         app.get('/jobs', async (req, res) => {
             try {
@@ -75,6 +76,38 @@ async function run() {
                 res.status(500).json({ success: false, message: 'Failed to search jobs by title' });
             }
         });
+
+        // ----------------------- all Gets api edn here -------------
+
+        // api for post a new job in database 
+        app.post('/api/jobs', async (req, res) => {
+            try {
+                const { title, company, location, salary_range, job_type, description, requirements, tags } = req.body;
+
+                if (!title || !company || !location || !description || !job_type) {
+                    return res.status(400).json({ success: false, message: 'Required fields: title, company, location, job_type, description' });
+                }
+
+                const newJob = {
+                    title,
+                    company,
+                    location,
+                    salary_range: salary_range || null,
+                    job_type,
+                    description,
+                    requirements: requirements || [],
+                    tags: tags || [],
+                    created_at: new Date(),
+                };
+
+                const result = await jobsCollection.insertOne(newJob);
+                res.status(201).json({ success: true, message: 'Job created successfully', data: { _id: result.insertedId, ...newJob } });
+            } catch (error) {
+                res.status(500).json({ success: false, message: 'Failed to create job' });
+            }
+        });
+
+
 
 
 
