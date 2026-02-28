@@ -107,6 +107,40 @@ async function run() {
             }
         });
 
+        // api for GET a  single job by ID
+        app.get('/jobs/:id', async (req, res) => {
+            try {
+                const { id } = req.params;
+                if (!ObjectId.isValid(id)) {
+                    return res.status(400).json({ success: false, message: 'Invalid job ID' });
+                }
+                const job = await jobsCollection.findOne({ _id: new ObjectId(id) });
+                if (!job) {
+                    return res.status(404).json({ success: false, message: 'Job not found' });
+                }
+                res.json({ success: true, data: job });
+            } catch (error) {
+                res.status(500).json({ success: false, message: 'Failed to fetch job' });
+            }
+        });
+
+        // api for DELETE a job by ID by admin
+        app.delete('/jobs/:id', async (req, res) => {
+            try {
+                const { id } = req.params;
+                if (!ObjectId.isValid(id)) {
+                    return res.status(400).json({ success: false, message: 'Invalid job ID' });
+                }
+                const result = await jobsCollection.deleteOne({ _id: new ObjectId(id) });
+                if (result.deletedCount === 0) {
+                    return res.status(404).json({ success: false, message: 'Job not found' });
+                }
+                res.json({ success: true, message: 'Job deleted successfully' });
+            } catch (error) {
+                res.status(500).json({ success: false, message: 'Failed to delete job' });
+            }
+        });
+
 
 
 
