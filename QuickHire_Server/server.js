@@ -82,9 +82,9 @@ async function run() {
         // api for post a new job in database 
         app.post('/api/jobs', async (req, res) => {
             try {
-                const { title, company, location, salary_range, job_type, description, requirements, tags } = req.body;
+                const { title, company, location, salary , type, description, requirements, responsibilities , tags } = req.body;
 
-                if (!title || !company || !location || !description || !job_type) {
+                if (!title || !company || !location || !description || !type) {
                     return res.status(400).json({ success: false, message: 'Required fields: title, company, location, job_type, description' });
                 }
 
@@ -92,10 +92,11 @@ async function run() {
                     title,
                     company,
                     location,
-                    salary_range: salary_range || null,
-                    job_type,
+                    salary: salary || null,
+                    type,
                     description,
                     requirements: requirements || [],
+                    responsibilities: responsibilities || [],
                     tags: tags || [],
                     created_at: new Date(),
                 };
