@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 import { AuthContext } from '../context/AuthProvider';
 
 const JobDetails = () => {
@@ -42,12 +43,40 @@ const JobDetails = () => {
 
   const handleApply = async (e) => {
     e.preventDefault();
+
     try {
-      await axios.post('https://quick-hire-server-eta.vercel.app/applications', { ...applyData, job_id: id });
-      alert('Application submitted successfully!');
+      await axios.post('https://quick-hire-server-eta.vercel.app/applications', {
+        ...applyData,
+        job_id: id,
+      });
+
+      // Success toast
+      toast.success('Application submitted successfully!', {
+        duration: 5000,
+        position: 'top-center',
+        style: {
+          border: '1px solid #10b981',
+          padding: '16px',
+          color: '#10b981',
+        },
+        iconTheme: {
+          primary: '#10b981',
+          secondary: '#fff',
+        },
+      });
+
       navigate('/jobs');
     } catch (err) {
-      alert('Failed to submit application.');
+      toast.error(err.response?.data?.message || 'Failed to submit application.', {
+        duration: 6000,
+        position: 'top-center',
+        style: {
+          border: '1px solid #ef4444',
+          padding: '16px',
+          color: '#ef4444',
+        },
+      });
+
       console.error(err);
     }
   };

@@ -23,6 +23,7 @@ async function run() {
     try {
         // await client.connect();
         const jobsCollection = client.db(process.env.MONGO_DB_NAME).collection("jobs");
+        const applicationsCollection = client.db(process.env.MONGO_DB_NAME).collection("applications");
 
         // ....... to fetch the data and filter them ..............
         // GET all jobs
@@ -140,6 +141,65 @@ async function run() {
                 res.json({ success: true, message: 'Job deleted successfully' });
             } catch (error) {
                 res.status(500).json({ success: false, message: 'Failed to delete job' });
+            }
+        });
+
+
+
+
+        // ..... api for handling the application for the job post .... ////
+
+
+        // api for  posting a new application for a job post
+        app.post('/applications', async (req, res) => {
+            try {
+                const { job_id, name, email, resume_link, cover_note } = req.body;
+
+                if (!job_id || !name || !email || !resume_link) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Required fields: job_id, name, email, resume_link'
+                    });
+                }
+
+                // Basic email validation using regex
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    return res.status(400).json({ success: false, message: 'Invalid email format' });
+                }
+
+                // Basic URL validation for resume
+                try {
+                    new URL(resume_link);
+                } catch {
+                    return res.status(400).json({ success: false, message: 'Invalid resume URL' });
+                }
+
+                // Check if job exists
+                const jobExists = await jobsCollection.findOne({ _id: new ObjectId(job_id) });
+                if (!jobExists) {
+                    return res.status(404).json({ success: false, message: 'Job not found' });
+                }
+
+                const newApplication = {
+                    job_id: new ObjectId(job_id),
+                    name,
+                    email,
+                    resume_link,
+                    cover_note: cover_note || '',
+                    status: 'pending',           
+                    created_at: new Date(),
+                };
+
+                const result = await applicationsCollection.insertOne(newApplication);
+
+                res.status(201).json({
+                    success: true,
+                    message: 'Application submitted successfully',
+                    data: { _id: result.insertedId, ...newApplication }
+                });
+            } catch (error) {
+                console.error(error);
+                res.status(500).json({ success: false, message: 'Failed to submit application' });
             }
         });
 
