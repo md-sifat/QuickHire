@@ -55,7 +55,7 @@ const Header = () => {
 
           <nav className="hidden md:flex items-center gap-8">
             <Link
-              to="/"
+              to="/jobs"
               className="text-gray-700 hover:text-purple-700 font-medium transition-colors duration-200"
             >
               Find Jobs
