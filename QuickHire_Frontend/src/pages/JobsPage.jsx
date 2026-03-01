@@ -1,14 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 const JobsPage = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [category, setCategory] = useState('');
   const [jobType, setJobType] = useState('');
   const [searchTitle, setSearchTitle] = useState('');
   const [error, setError] = useState(null);
+
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const initialCategory = searchParams.get('category') || '';
+
+  const [category, setCategory] = useState(initialCategory);
+  // ... rest of your code
+
+  // When category changes (including from URL), fetch jobs
+  useEffect(() => {
+    fetchJobs();
+  }, [category, jobType, searchTitle]);
 
   const categories = ['Design', 'Sales', 'Marketing', 'Finance', 'Technology', 'Engineering', 'Business', 'Human Resources'];
   const jobTypes = ['Full Time', 'Part Time', 'Contract', 'Internship'];

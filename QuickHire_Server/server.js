@@ -83,7 +83,7 @@ async function run() {
         // api for post a new job in database 
         app.post('/api/jobs', async (req, res) => {
             try {
-                const { title, category, company, location, salary , type, description, requirements, responsibilities , tags } = req.body;
+                const { title, category, company, location, salary, type, description, requirements, responsibilities, tags } = req.body;
 
                 if (!title || !company || !location || !description || !type) {
                     return res.status(400).json({ success: false, message: 'Required fields: title, company, location, job_type, description' });
@@ -186,7 +186,7 @@ async function run() {
                     email,
                     resume_link,
                     cover_note: cover_note || '',
-                    status: 'pending',           
+                    status: 'pending',
                     created_at: new Date(),
                 };
 
@@ -200,6 +200,27 @@ async function run() {
             } catch (error) {
                 console.error(error);
                 res.status(500).json({ success: false, message: 'Failed to submit application' });
+            }
+        });
+
+        // api to count jobs by category
+        // GET /api/categories/counts
+        app.get('/categories/counts', async (req, res) => {
+            try {
+                const pipeline = [
+                    { $unwind: '$tags' },
+                    {
+                        $group: {
+                            _id: '$tags',
+                            count: { $sum: 1 },
+                        },
+                    },
+                    { $sort: { count: -1 } },
+                ];
+                const result = await jobsCollection.aggregate(pipeline).toArray();
+                res.json({ success: true, data: result });
+            } catch (error) {
+                res.status(500).json({ success: false, message: 'Failed to get category counts' });
             }
         });
 
