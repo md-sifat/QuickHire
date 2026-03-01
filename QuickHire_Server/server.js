@@ -42,7 +42,7 @@ async function run() {
                 if (!category) {
                     return res.status(400).json({ success: false, message: 'Category query param is required' });
                 }
-                const jobs = await jobsCollection.find({ tags: { $regex: category, $options: 'i' } }).sort({ created_at: -1 }).toArray();
+                const jobs = await jobsCollection.find({ category: { $regex: category, $options: 'i' } }).sort({ created_at: -1 }).toArray();
                 res.json({ success: true, data: jobs });
             } catch (error) {
                 res.status(500).json({ success: false, message: 'Failed to fetch jobs by category' });
@@ -56,7 +56,7 @@ async function run() {
                 if (!job_type) {
                     return res.status(400).json({ success: false, message: 'job_type query param is required' });
                 }
-                const jobs = await jobsCollection.find({ job_type: { $regex: job_type, $options: 'i' } }).sort({ created_at: -1 }).toArray();
+                const jobs = await jobsCollection.find({ type: { $regex: job_type, $options: 'i' } }).sort({ created_at: -1 }).toArray();
                 res.json({ success: true, data: jobs });
             } catch (error) {
                 res.status(500).json({ success: false, message: 'Failed to fetch jobs by job type' });
@@ -82,7 +82,7 @@ async function run() {
         // api for post a new job in database 
         app.post('/api/jobs', async (req, res) => {
             try {
-                const { title, company, location, salary , type, description, requirements, responsibilities , tags } = req.body;
+                const { title, category, company, location, salary , type, description, requirements, responsibilities , tags } = req.body;
 
                 if (!title || !company || !location || !description || !type) {
                     return res.status(400).json({ success: false, message: 'Required fields: title, company, location, job_type, description' });
@@ -92,6 +92,7 @@ async function run() {
                     title,
                     company,
                     location,
+                    category,
                     salary: salary || null,
                     type,
                     description,
