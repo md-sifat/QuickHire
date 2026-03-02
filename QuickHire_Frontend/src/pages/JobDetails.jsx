@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { AuthContext } from '../context/AuthProvider';
+import { Link } from 'react-router-dom';
+
 
 const JobDetails = () => {
   const { id } = useParams();
