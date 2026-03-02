@@ -1,11 +1,10 @@
-// src/context/AuthProvider.jsx
 import React, { createContext, useState, useEffect } from 'react';
 import { auth, googleProvider } from '../firebase/firebase.config';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 
-// Fixed admin credentials (change these!)
-const ADMIN_USERNAME = "admin@quickhire.com";
-const ADMIN_PASSWORD = "QuickHire2025!";
+// Fixed admin credentials 
+const ADMIN_USERNAME = "admin";
+const ADMIN_PASSWORD = "admin";
 
 export const AuthContext = createContext(null);
 

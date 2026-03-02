@@ -9,6 +9,7 @@ import Footer from './components/Footer';
 import JobsPage from './pages/JobsPage';
 import CompaniesPage from './pages/CompaniesPage';
 import CompanyDetailPage from './pages/CompanyDetailPage';
+import AdminDashboard from './pages/AdminDashboard';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
               <Route path="/jobs/:id" element={<JobDetails />} />
               <Route path="/browse" element={<CompaniesPage />} />
               <Route path="/companies/:slug" element={<CompanyDetailPage />} /> 
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
             </Routes>
           </main>
           <Footer />

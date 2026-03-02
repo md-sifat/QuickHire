@@ -21,7 +21,7 @@ const client = new MongoClient(uri, {
 
 async function run() {
     try {
-        // await client.connect();
+        await client.connect();
         const jobsCollection = client.db(process.env.MONGO_DB_NAME).collection("jobs");
         const applicationsCollection = client.db(process.env.MONGO_DB_NAME).collection("applications");
 
@@ -109,6 +109,8 @@ async function run() {
                 res.status(500).json({ success: false, message: 'Failed to create job' });
             }
         });
+
+
 
         // api for GET a  single job by ID
         app.get('/jobs/:id', async (req, res) => {
@@ -225,6 +227,149 @@ async function run() {
         });
 
 
+        // api for upate application status by admin
+        app.put('/api/applications/:id', async (req, res) => {
+            try {
+                const { id } = req.params;
+                const { status } = req.body;
+                if (!ObjectId.isValid(id)) return res.status(400).json({ success: false, message: 'Invalid ID' });
+
+                const result = await applicationsCollection.updateOne(
+                    { _id: new ObjectId(id) },
+                    { $set: { status, updated_at: new Date() } }
+                );
+
+                if (result.matchedCount === 0) return res.status(404).json({ success: false, message: 'Application not found' });
+
+                res.json({ success: true, message: 'Application updated' });
+            } catch (error) {
+                res.status(500).json({ success: false, message: 'Failed to update application' });
+            }
+        });
+
+        app.delete('/api/applications/:id', async (req, res) => {
+            try {
+                const { id } = req.params;
+                if (!ObjectId.isValid(id)) return res.status(400).json({ success: false, message: 'Invalid ID' });
+
+                const result = await applicationsCollection.deleteOne({ _id: new ObjectId(id) });
+                if (result.deletedCount === 0) return res.status(404).json({ success: false, message: 'Application not found' });
+
+                res.json({ success: true, message: 'Application deleted' });
+            } catch (error) {
+                res.status(500).json({ success: false, message: 'Failed to delete application' });
+            }
+        });
+
+        // GET all applications (for admin dashboard)
+        app.get('/api/applications', async (req, res) => {
+            try {
+                const applications = await applicationsCollection.find()
+                    .sort({ created_at: -1 }) // newest first
+                    .toArray();
+
+                res.json({
+                    success: true,
+                    count: applications.length,
+                    data: applications
+                });
+            } catch (error) {
+                console.error('Error fetching applications:', error);
+                res.status(500).json({ success: false, message: 'Failed to fetch applications' });
+            }
+        });
+
+        // GET applications for a specific job
+        app.get('/api/applications/job/:jobId', async (req, res) => {
+            try {
+                const { jobId } = req.params;
+
+                if (!ObjectId.isValid(jobId)) {
+                    return res.status(400).json({ success: false, message: 'Invalid job ID' });
+                }
+
+                const applications = await applicationsCollection.find({
+                    job_id: new ObjectId(jobId)
+                })
+                    .sort({ created_at: -1 })
+                    .toArray();
+
+                res.json({
+                    success: true,
+                    count: applications.length,
+                    data: applications
+                });
+            } catch (error) {
+                console.error('Error fetching job applications:', error);
+                res.status(500).json({ success: false, message: 'Failed to fetch applications for job' });
+            }
+        });
+
+        // PUT update job
+        app.put('/jobs/:id', async (req, res) => {
+            try {
+                const { id } = req.params;
+
+                if (!ObjectId.isValid(id)) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Invalid job ID format'
+                    });
+                }
+
+                const updateData = { ...req.body };
+                delete updateData._id;
+                if (typeof updateData.requirements === 'string') {
+                    updateData.requirements = updateData.requirements
+                        .split(',')
+                        .map(s => s.trim())
+                        .filter(Boolean);
+                }
+
+                if (typeof updateData.responsibilities === 'string') {
+                    updateData.responsibilities = updateData.responsibilities
+                        .split(',')
+                        .map(s => s.trim())
+                        .filter(Boolean);
+                }
+
+                if (typeof updateData.tags === 'string') {
+                    updateData.tags = updateData.tags
+                        .split(',')
+                        .map(s => s.trim())
+                        .filter(Boolean);
+                }
+
+                updateData.updated_at = new Date();
+
+                const result = await jobsCollection.updateOne(
+                    { _id: new ObjectId(id) },
+                    { $set: updateData }
+                );
+
+                if (result.matchedCount === 0) {
+                    return res.status(404).json({
+                        success: false,
+                        message: 'Job not found'
+                    });
+                }
+
+                return res.json({
+                    success: true,
+                    message: 'Job updated successfully',
+                    modifiedCount: result.modifiedCount
+                });
+
+            } catch (error) {
+                console.error('PUT /jobs/:id ERROR:', error);
+
+                return res.status(500).json({
+                    success: false,
+                    message: 'Server error while updating job',
+                    error: error.message
+                });
+            }
+        });
 
 
 
