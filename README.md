@@ -50,4 +50,3 @@ Modern full-stack job portal for job seekers and companies.
 - Backend: Vercel (serverless)
 - Database: MongoDB Atlas
 
-## Project Structure
