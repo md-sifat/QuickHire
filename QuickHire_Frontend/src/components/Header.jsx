@@ -6,7 +6,7 @@ import { AuthContext } from '../context/AuthProvider';
 import logo from '../assets/logo.png';
 
 const Header = () => {
-  const { user, logout } = useContext(AuthContext);
+  const { user, logout, isAdmin } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [isDesktopProfileOpen, setIsDesktopProfileOpen] = useState(false);
@@ -38,7 +38,6 @@ const Header = () => {
     try {
       await logout();
       navigate('/');
-      // Close all dropdowns
       setIsDesktopProfileOpen(false);
       setIsMobileProfileOpen(false);
       setIsNavDropdownOpen(false);
@@ -111,14 +110,26 @@ const Header = () => {
                   <span className="font-medium text-gray-800 text-sm group-hover:text-purple-700 transition-colors">
                     {user.displayName || user.email?.split('@')[0]}
                   </span>
+                  {isAdmin && (
+                    <span className="text-xs text-indigo-600 font-medium">Admin</span>
+                  )}
                 </div>
               </button>
 
               {isDesktopProfileOpen && (
-                <div className="absolute right-0 mt-3 w-48 bg-white rounded-xl shadow-xl border border-gray-200 py-1.5 z-50 overflow-hidden">
+                <div className="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-xl border border-gray-200 py-2 z-50 overflow-hidden">
+                  {isAdmin && (
+                    <Link
+                      to="/admin/dashboard"
+                      className="block px-5 py-2.5 text-sm text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 transition-colors duration-150"
+                      onClick={() => setIsDesktopProfileOpen(false)}
+                    >
+                      Admin Dashboard
+                    </Link>
+                  )}
                   <button
                     onClick={(e) => {
-                      e.stopPropagation(); 
+                      e.stopPropagation();
                       handleLogout();
                     }}
                     className="w-full text-left px-5 py-2.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors duration-150"
@@ -185,7 +196,6 @@ const Header = () => {
             )}
           </div>
 
-          {/* Mobile Auth */}
           {user ? (
             <div className="relative" ref={mobileProfileRef}>
               <button
@@ -204,13 +214,27 @@ const Header = () => {
                     {(user.displayName || user.email || '?')[0].toUpperCase()}
                   </div>
                 )}
+                {isAdmin && (
+                  <span className="text-xs text-indigo-600 font-medium absolute -top-2 -right-2 bg-white px-1.5 py-0.5 rounded-full shadow">
+                    Admin
+                  </span>
+                )}
               </button>
 
               {isMobileProfileOpen && (
-                <div className="absolute right-0 mt-3 w-48 bg-white rounded-xl shadow-xl border border-gray-200 py-1.5 z-50">
+                <div className="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-xl border border-gray-200 py-2 z-50">
+                  {isAdmin && (
+                    <Link
+                      to="/admin/dashboard"
+                      className="block px-5 py-2.5 text-sm text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 transition-colors duration-150"
+                      onClick={() => setIsMobileProfileOpen(false)}
+                    >
+                      Admin Dashboard
+                    </Link>
+                  )}
                   <button
                     onClick={(e) => {
-                      e.stopPropagation(); // Prevent outside-click from closing before logout
+                      e.stopPropagation();
                       handleLogout();
                     }}
                     className="w-full text-left px-5 py-2.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors duration-150"

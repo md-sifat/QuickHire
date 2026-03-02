@@ -38,12 +38,21 @@ const AuthProvider = ({ children }) => {
     return Promise.reject(new Error("Invalid admin credentials"));
   };
 
-  const logout = () => {
-    setLoading(true);
+  const logout = async () => {
+  try {
+    if (auth.currentUser) {
+      await signOut(auth);
+    }
+    setUser(null);
     setIsAdmin(false);
     localStorage.removeItem('adminLoggedIn');
-    return signOut(auth);
-  };
+    navigate('/');
+  } catch (error) {
+    console.error('Logout error:', error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
