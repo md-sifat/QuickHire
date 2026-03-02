@@ -15,9 +15,7 @@ const JobsPage = () => {
   const initialCategory = searchParams.get('category') || '';
 
   const [category, setCategory] = useState(initialCategory);
-  // ... rest of your code
 
-  // When category changes (including from URL), fetch jobs
   useEffect(() => {
     fetchJobs();
   }, [category, jobType, searchTitle]);

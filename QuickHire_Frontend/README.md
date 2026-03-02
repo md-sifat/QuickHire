@@ -1,16 +1,53 @@
-# React + Vite
+# QuickHire – Job Portal Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Modern full-stack job portal for job seekers and companies.
 
-Currently, two official plugins are available:
+**Live Demo:** [https://quick-hire-frontend-seven.vercel.app/](https://quick-hire-frontend-seven.vercel.app/)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**Admin Credentials (for testing):**
+- Username: `admin`
+- Password: `admin1234`
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### For Job Seekers
+- Browse thousands of jobs with powerful filters (category, job type, title search)
+- View detailed job descriptions, requirements, responsibilities & company info
+- Apply to jobs with resume link + cover note (requires login)
+- Responsive design – works perfectly on mobile, tablet & desktop
+- Google & Email/Password authentication
+- Profile avatar & name display after login
 
-## Expanding the ESLint configuration
+### For Companies / Recruiters (via Admin Dashboard)
+- Admin panel to manage jobs & applications
+- Add new job postings
+- Edit existing jobs
+- Delete jobs
+- View all applications
+- Update application status (Pending → Reviewed → Accepted → Rejected)
+- Delete applications
+- Dashboard statistics: total jobs, total applications, pending count
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Tech Stack
+
+**Frontend**
+- React (Vite)
+- React Router v6
+- Tailwind CSS
+- Firebase Authentication (Email + Google)
+- Axios for API calls
+- react-hot-toast for notifications
+- Context API for global auth state
+
+**Backend**
+- Node.js + Express.js
+- MongoDB Atlas (via Mongoose-like native driver)
+- Vercel serverless deployment
+- REST API endpoints for jobs & applications
+
+**Deployment**
+- Frontend: Vercel
+- Backend: Vercel (serverless)
+- Database: MongoDB Atlas
+
+## Project Structure

@@ -4,7 +4,7 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithP
 
 // Fixed admin credentials 
 const ADMIN_USERNAME = "admin";
-const ADMIN_PASSWORD = "admin";
+const ADMIN_PASSWORD = "admin1234";
 
 export const AuthContext = createContext(null);
 
