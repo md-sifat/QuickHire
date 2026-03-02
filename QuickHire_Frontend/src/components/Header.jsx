@@ -1,4 +1,3 @@
-// src/components/Header.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
@@ -9,22 +8,28 @@ import logo from '../assets/logo.png';
 const Header = () => {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+
+  const [isDesktopProfileOpen, setIsDesktopProfileOpen] = useState(false);
+  const [isMobileProfileOpen, setIsMobileProfileOpen] = useState(false);
   const [isNavDropdownOpen, setIsNavDropdownOpen] = useState(false);
 
-  const profileRef = useRef(null);
+  const desktopProfileRef = useRef(null);
+  const mobileProfileRef = useRef(null);
   const navRef = useRef(null);
 
-  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (profileRef.current && !profileRef.current.contains(event.target)) {
-        setIsProfileDropdownOpen(false);
+      if (desktopProfileRef.current && !desktopProfileRef.current.contains(event.target)) {
+        setIsDesktopProfileOpen(false);
+      }
+      if (mobileProfileRef.current && !mobileProfileRef.current.contains(event.target)) {
+        setIsMobileProfileOpen(false);
       }
       if (navRef.current && !navRef.current.contains(event.target)) {
         setIsNavDropdownOpen(false);
       }
     };
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
@@ -33,7 +38,10 @@ const Header = () => {
     try {
       await logout();
       navigate('/');
-      setIsProfileDropdownOpen(false);
+      // Close all dropdowns
+      setIsDesktopProfileOpen(false);
+      setIsMobileProfileOpen(false);
+      setIsNavDropdownOpen(false);
     } catch (error) {
       console.error('Logout failed:', error);
     }
@@ -43,7 +51,7 @@ const Header = () => {
     <header className="bg-white shadow-md py-4 px-5 md:px-8 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-3">
+        <Link to="/" className="flex items-center gap-3 z-50">
           {logo ? (
             <img
               src={logo}
@@ -79,9 +87,9 @@ const Header = () => {
 
           {/* Desktop Auth */}
           {user ? (
-            <div className="relative" ref={profileRef}>
+            <div className="relative" ref={desktopProfileRef}>
               <button
-                onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                onClick={() => setIsDesktopProfileOpen(!isDesktopProfileOpen)}
                 className="flex items-center gap-3 group transition-all duration-200 hover:scale-105 focus:outline-none"
               >
                 <div className="relative">
@@ -106,10 +114,13 @@ const Header = () => {
                 </div>
               </button>
 
-              {isProfileDropdownOpen && (
+              {isDesktopProfileOpen && (
                 <div className="absolute right-0 mt-3 w-48 bg-white rounded-xl shadow-xl border border-gray-200 py-1.5 z-50 overflow-hidden">
                   <button
-                    onClick={handleLogout}
+                    onClick={(e) => {
+                      e.stopPropagation(); 
+                      handleLogout();
+                    }}
                     className="w-full text-left px-5 py-2.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors duration-150"
                   >
                     Sign Out
@@ -135,7 +146,7 @@ const Header = () => {
           )}
         </div>
 
-        {/* Mobile: nav dropdown + auth (same as desktop) */}
+        {/* Mobile: nav dropdown + auth */}
         <div className="md:hidden flex items-center gap-4">
           {/* Nav Dropdown Trigger */}
           <div className="relative" ref={navRef}>
@@ -149,23 +160,23 @@ const Header = () => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  d="M4 6h16M4 12h16M4 18h7"
+                  d={isNavDropdownOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
                 />
               </svg>
             </button>
 
             {isNavDropdownOpen && (
-              <div className="absolute right-0 top-full mt-3 w-56 bg-white rounded-xl shadow-xl border border-gray-200 py-3 z-50">
+              <div className="absolute right-0 top-full mt-3 w-64 bg-white rounded-xl shadow-xl border border-gray-200 py-4 px-2 z-50">
                 <Link
                   to="/jobs"
-                  className="block px-5 py-3 text-gray-800 hover:bg-purple-50 hover:text-purple-700 transition-colors"
+                  className="block px-5 py-3 text-gray-800 hover:bg-purple-50 hover:text-purple-700 transition-colors rounded-lg"
                   onClick={() => setIsNavDropdownOpen(false)}
                 >
                   Find Jobs
                 </Link>
                 <Link
                   to="/browse"
-                  className="block px-5 py-3 text-gray-800 hover:bg-purple-50 hover:text-purple-700 transition-colors"
+                  className="block px-5 py-3 text-gray-800 hover:bg-purple-50 hover:text-purple-700 transition-colors rounded-lg"
                   onClick={() => setIsNavDropdownOpen(false)}
                 >
                   Browse Companies
@@ -174,12 +185,12 @@ const Header = () => {
             )}
           </div>
 
-          {/* Mobile Auth - same as desktop */}
+          {/* Mobile Auth */}
           {user ? (
-            <div className="relative" ref={profileRef}>
+            <div className="relative" ref={mobileProfileRef}>
               <button
-                onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                className="flex items-center gap-2 group focus:outline-none"
+                onClick={() => setIsMobileProfileOpen(!isMobileProfileOpen)}
+                className="flex items-center gap-2 focus:outline-none"
               >
                 {user.photoURL ? (
                   <img
@@ -195,11 +206,14 @@ const Header = () => {
                 )}
               </button>
 
-              {isProfileDropdownOpen && (
+              {isMobileProfileOpen && (
                 <div className="absolute right-0 mt-3 w-48 bg-white rounded-xl shadow-xl border border-gray-200 py-1.5 z-50">
                   <button
-                    onClick={handleLogout}
-                    className="w-full text-left px-5 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent outside-click from closing before logout
+                      handleLogout();
+                    }}
+                    className="w-full text-left px-5 py-2.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors duration-150"
                   >
                     Sign Out
                   </button>

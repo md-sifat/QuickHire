@@ -1,17 +1,18 @@
-// src/components/Companies.jsx
 import React from 'react';
+import vodaphone from '../assets/companies/vodaphone.ico';
+import intel from '../assets/companies/intel.webp';
+import amd from '../assets/companies/amd.jpg';
+import talkit from '../assets/companies/talkit.png';    
 
-// You can place these logo images in src/assets/companies/
-// For now I'm using placeholder URLs from a public CDN (replace with your own images)
 
 const companyLogos = [
   {
     name: 'Vodafone',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Vodafone_2017_logo.svg/512px-Vodafone_2017_logo.svg.png',
+    logo: vodaphone,
   },
   {
     name: 'Intel',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Intel_logo_%282020%29.svg/512px-Intel_logo_%282020%29.svg.png',
+    logo: intel,
   },
   {
     name: 'Tesla',
@@ -19,11 +20,11 @@ const companyLogos = [
   },
   {
     name: 'AMD',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/AMD_Logo.svg/512px-AMD_Logo.svg.png',
+    logo: amd,
   },
   {
-    name: 'Talkit', // assuming this is a fictional or typo for "Talkdesk" or similar
-    logo: 'https://via.placeholder.com/180x60/333/fff?text=Talkit',
+    name: 'Talkit', 
+    logo: talkit,
   },
 ];
 
@@ -50,13 +51,11 @@ const Companies = () => {
                 loading="lazy"
               />
 
-              {/* Optional subtle background hover effect */}
               <div className="absolute inset-0 bg-gradient-to-br from-purple-50/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
             </div>
           ))}
         </div>
 
-        {/* Optional subtle note or call-to-action */}
         <div className="mt-10 text-center text-sm text-gray-500">
           Join hundreds of growing startups and tech companies hiring on QuickHire
         </div>
